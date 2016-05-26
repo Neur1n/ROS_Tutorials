@@ -45,7 +45,7 @@ $ . ~/Documents/Test_ws/devel/setup.bash
 #
 
 #=============================================================================== 4. Package Dependency
-$ rospack depend1 beginner_tutorials
+$ rospack depends1 beginner_tutorials
 #
 # Shows the dependencies of this package, which are also stored in package.xml.
 # Verifying by using:
