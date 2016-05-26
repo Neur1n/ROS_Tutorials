@@ -1,0 +1,85 @@
+#=============================================================================== 1.rqt_console & rqt_logger_level
+$ rosrun rqt_console rqt_console
+$ rosrun rqt_logger_level rqt_logger_level
+$ rosrun turtlesim turtlesim_node __name:=myturtle
+#
+# Run "roscore" in a new terminal first then run the first 2 in 2 new terminals.
+# Two windows will popup. Check the screenshots 7_rqt_(console/logger).png.
+#
+# After running the 3rd command line, the information of node /my_turtle appears
+# in the console windows, while the logger level window needs to be refreshed 
+# manually. Check the screenshots 7_rqt_(console/logger).png.
+#
+
+$ rostopic pub /turtle1/cmd_vel geometry_msgs/Twist -r 1 -- 
+  '{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+#
+# In logger window, choose "/rosout-/ros-/Warn", then use this command (1 line)
+# to make the turtle run into the wall. 
+# Check the screenshots 7_warning_(rqt_console/terminal).png for the outputs.
+#
+# Priority of the logger levels is in the following order:
+#
+#     Fatal > Error > Warn > Info > Debug
+#
+# By setting the logger level, you will get all messages of that priority level
+# or higher. For example, by setting the level to Warn, you will get all Warn,
+# Error, and Fatal logging messages.
+#
+
+#=============================================================================== 2. roslaunch
+$ roscd beginner_tutorials
+$ mkdir launch
+$ cd launch
+#
+# Create a directory to store the launch files, which is not necessary but a 
+# good practice.
+# Then make a launch file using the following:
+#
+#     <launch>
+#     
+#	<group ns="turtlesim1">
+#	  <node pkg="turtlesim" name="sim" type="turtlesim_node"/>
+#	</group>
+#     
+#	<group ns="turtlesim2">
+#	  <node pkg="turtlesim" name="sim" type="turtlesim_node"/>
+#	</group>
+#     
+#	<node pkg="turtlesim" name="mimic" type="mimic">
+#	  <remap from="input" to="turtlesim1/turtle1"/>
+#	  <remap from="output" to="turtlesim2/turtle1"/>
+#	</node>
+#     
+#     </launch>
+# 
+# Explanation:
+#
+#     line 39,54: the 1st one is a"launch" tag, the file is identified as a
+#                 launch file; the 2nd one closes the xml tag
+#
+#     line 41-47: 2 groups with 2 different namespace tags, with a turtlesim
+#                 node of which the name is "sim"
+#
+#     line 49-52: start the mimic node with the topics input and output renamed
+#                 to turtlesim1 and turtlesim2, which will cause turtlesim2 to
+#                 mimic turtlesim1
+#
+
+$ roslaunch beginner_tutorials turtlemimic.launch
+#
+# Launching the launch file causes new messages in console and logger. Check
+# screenshots 7_roslaunch_(console/logger).png.
+#
+
+$ rostopic pub /turtlesim1/turtle1/cmd_vel geometry_msgs/Twist -r 1 -- 
+  '[2.0, 0.0, 0.0]' '[0.0, 0.0, -1.8]'
+#
+# Check screenshot 7_roslaunch_turtlrmimic.png.
+#
+
+$ rqt_graph
+#
+# Used to understand what this launch file did. 
+# Check 7_rqt_graph_turtlrmimic.png.
+#

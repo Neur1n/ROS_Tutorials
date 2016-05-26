@@ -1,0 +1,143 @@
+#=============================================================================== 1. rosservice 
+$ rosservice -h
+#
+# Gives out:
+#
+#     rosservice args	print service arguments
+#     rosservice call	call the service with the provided args
+#     rosservice find	find services by service type
+#     rosservice info	print information about service
+#     rosservice list	list active services
+#     rosservice type	print service type
+#     rosservice uri	print service ROSRPC uri
+#
+
+$ rosservice list
+#
+# After running "$ roscore" and "$ rosrun turtlesim turtlesim_node", this
+# command shows that turtlesim node provides the following services:
+#
+#     /clear
+#     /kill
+#     /reset
+#     /rosout/get_loggers
+#     /rosout/set_logger_level
+#     /spawn
+#     /turtle1/set_pen
+#     /turtle1/teleport_absolute
+#     /turtle1/teleport_relative
+#     /turtlesim/get_loggers
+#     /turtlesim/set_logger_level
+# 
+
+$ rosservice type clear # line 12
+#
+# Usage:
+#
+#     rosservice type [service]
+#
+# Gives out:
+#
+#     std_srvs/Empty
+#
+# This service is empty, this means when the service call is made it 
+# takes no arguments (i.e. it sends no data when making a request and receives 
+# no data when receiving a response).
+#
+
+$ rosservice call clear # line 8
+#
+# Usage:
+#
+#     rosservice call [service] [args]
+#
+# Result: Clears the background (or route) of the turtlesim node, when using
+#         teleoperation to control the turtle. Using "clear" or "/clear" gives 
+#         out the same result.
+#
+
+$ rosservice type spawn| rossrv show
+#
+# This gives out information for the service spawn (line 26):
+#
+#     float32 x       \
+#     float32 y       | -> new turtle's location and orientation
+#     float32 theta   /
+#     string name       -> new turtle's name
+#     ---
+#     string name       -> returns new turtle's name
+#
+
+$ rosservice call spawn 3 0 0.5 ""
+#
+# Gives out the new turtle's name:
+#
+#     name: turtle2
+#
+# Since the name field is empty.
+#
+
+#=============================================================================== 2. rosparam 
+$ rosservice -h
+#
+# Gives out:
+#
+#     rosparam set	set parameter
+#     rosparam get	get parameter
+#     rosparam load	load parameters from file
+#     rosparam dump	dump parameters to file
+#     rosparam delete	delete parameter
+#     rosparam list	list parameter names
+#     
+
+$ rosservice list # line 90
+#
+# Gives out:
+#
+#     background_b    \
+#     background_g    | -> the turtlesim node has 3 parameters on the param
+#     background_r    /    server for background color
+#     rosdistro
+#     roslaunch/uris/host_[host_name]__37561
+#     rosversion
+#     run_id
+#
+
+$ rosparam set [param_name] # line 85
+$ rosparam get [param_name] # line 86
+#
+# Used to set or get the parameters. For example:
+#
+#     $ rosparam set background_r 150
+#     $ rosservice call clear
+#
+# The parameter "background_r" is set to 150, and a /clear service is required
+# to show the change.
+#
+
+$ rosparam get /
+#
+# Gives out the contents of the entire Parameter Server:
+#
+#     background_b: 150
+#     background_g: 86
+#     background_r: 69
+#     rosdistro: 'indigo'
+#     roslaunch: uris: {host_[host_name]__37561: 'http://[host_name]:37561/'}
+#     rosversion: '1.11.19'
+#     run_id: 98d2eef0-1e0e-11e6-adb6-5cac4cbf3508
+#
+
+$ rosparam dump ~/Desktop/params.yaml
+$ rosparam load ~/Desktop/params.yaml copy
+$ rosparam get copy/background_b
+#
+# Usage:
+#
+#     rosparam dump [file_name] [namespace]
+#     rosparam load [file_name] [namespace]
+#
+# (1)write all the parameters to the file ~/Desktop/params.yaml
+# (2)You can even load these yaml files into new namespaces, e.g. "copy"
+# (3)gives out 150, as same as line 122
+#

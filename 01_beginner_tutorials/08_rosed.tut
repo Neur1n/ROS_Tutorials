@@ -1,0 +1,25 @@
+#=============================================================================== 1. Using rosed
+$ rosed [package_name] [filename]
+#
+# Example:
+#
+#     rosed roscpp Logger.msg
+#
+
+#=============================================================================== 2. rosed with tab completion
+$ rosed [package_name] <tab><tab>
+#
+# Example:
+#
+#     $ rosed roscpp <tab><tab>
+#
+# Gives out:
+#
+#     Empty.srv                   roscpp.cmake
+#     genmsg_cpp.py               roscppConfig.cmake
+#     gensrv_cpp.py               roscppConfig-version.cmake
+#     GetLoggers.srv              roscpp-msg-extras.cmake
+#     Logger.msg                  roscpp-msg-paths.cmake
+#     msg_gen.py                  SetLoggerLevel.srv
+#     package.xml
+#

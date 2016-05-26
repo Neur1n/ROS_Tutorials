@@ -1,0 +1,219 @@
+#=============================================================================== 1. Introduction
+msg: 
+(1)msg files are stored in the msg directory of a package.
+
+(2)msg files are simple text files that describe the fields of a ROS message.
+   They are used to generate source code for messages in different languages.
+
+(3)msgs are files with a field type and a field name per line, available field
+   types are:
+
+       -int8, int16, int32, int64 (plus uint*)
+       -float32, float64
+       -string
+       -time, duration
+       -other msg files
+       -variable-length array[] and fixed-length array[C]
+
+(4)Header: a special type in ROS that contains a timestamp and coordinate frame 
+           information that are commonly used in ROS, frequently seen in a msg
+	   file as the 1st line: Header header.
+
+	   Example:
+
+               Header header                           # header
+               string child_frame_id                   # string primitive
+               geometry_msgs/PoseWithCovariance pose   # 2 msgs
+               geometry_msgs/TwistWithCovariance twist
+
+
+srv:
+(1)srv files are stored in the srv directory of a package
+
+(2)an srv file describes a service. It is composed of 2 parts: a request and a
+   response. The 2 parts are separated by a "---" line.
+
+   Example:
+
+       int64 A
+       int64 B
+       ---
+       int 64 sum
+
+#=============================================================================== 2. Creating a msg
+# Example
+1st step:
+
+    $ roscd beginner_tutorials
+    $ mkdir msg
+    $ echo "int64 num" > msg/Num.msg
+
+2nd step:
+
+    Uncomment the following 2 lines in package.xml:
+    
+        <build_depend>message_generation</build_depend> # needed at build time
+        <run_depend>message_runtime</run_depend>        # needed at runtime
+
+3rd step:
+
+    Modify the .../beginner_tutorials/CMakeLists.txt:
+
+        (1)make the "find_package" function (line 7) looks like:
+
+               find_package(catkin REQUIRED COMPONENTS
+                   roscpp
+                   rospy
+                   std_msgs
+                   message_generation
+               )
+
+        (2)make the "add_message_files" function (line 48) looks like:
+
+               add_message_files(
+                   FILES
+                   Num.msg
+               )
+
+        (3)uncomment the "generate_messages" function (line 68) and add any 
+           packages you depend on which contain .msg files that your messages 
+           use (in this case std_msgs), such that it looks like:
+
+               generate_messages(
+                   DEPENDENCIES
+                   std_msgs
+               )
+
+        (4)make the "catkin_package" function (line 102) looks like:
+
+               catkin_package(
+                   INCLUDE_DIRS include
+                   LIBRARIES beginner_tutorials
+                   CATKIN_DEPENDS massage_runtime roscpp rospy std_msgs
+                   DEPENDS system_lib
+               )
+
+#=============================================================================== 3. rosmsg
+$rosmsg -h
+#
+# Gives out:
+#
+#     Commands:
+#           rosmsg show	        Show message description
+#           rosmsg list	        List all messages
+#           rosmsg md5	        Display message md5sum
+#           rosmsg package	List messages in a package
+#           rosmsg packages	List packages that contain messages
+#  
+
+$ rosmsg show beginner_tutorials/Num
+#
+# Usage:
+#
+#     rosmsg show [message type]
+#
+# Gives out:
+#
+#     int64 num
+#
+# This example command line can be used when pwd is /home/[user_name]. If using
+# "$ rosmsg show Num" directly, different results will be shown:
+#
+#     (1)in .../beginner_tutorials: int64 num
+#
+#     (2)in ~ or somewhere else: [beginner_tutorials/Num]
+#                                int64 Num
+#
+
+#=============================================================================== 4. Creating a srv
+# Example
+1st step:
+
+    $ roscd beginner_tutorials
+    $ mkdir srv
+    $ roscp rospy_tutorials AddTwoInts.srv srv/AddTwoInts.srv
+    #
+    # Copying an existing one from another package, instead of creating a new 
+    # srv definition by hand.
+    #
+    # Usage:
+    #
+    #     # roscp [package_name] [file_to_copy_path] [copy_path]
+    #
+
+2nd step:
+
+    (* has been done while creating a msg.)
+
+3rd step:
+    
+    (1)(* has been done while creating a msg.)
+
+    (2)make the "add_service_files" function (line 54) looks like:
+
+           add_service_files(
+               FILES
+               AddTwoInts.srv
+           )
+
+#=============================================================================== 5. rossrv
+$ rossrv -h
+#
+# Gives out:
+#
+#     Commands:
+#              rossrv show	Show service description
+#              rossrv list	List all services
+#              rossrv md5	Display service md5sum
+#              rossrv package	List services in a package
+#              rossrv packages	List packages that contain services
+#
+# (* rosmag [a], rossrv [b] -> options of a are same as b
+#
+
+$ rossrv show beginner_tutorials/AddTwoInts
+#
+# Usage:
+#
+#     rossrv show [service type]
+#
+# Gives out:
+#
+#     int64 a
+#     int64 b
+#     ---
+#     int64 sum
+#
+# If directly using "$ rossrv show AddTwoInts", it gives out:
+#
+#     [beginner_tutorials/AddTwoInts]:
+#     int64 a
+#     int64 b
+#     ---
+#     int64 sum
+#     
+#     [rospy_tutorials/AddTwoInts]:
+#     int64 a
+#     int64 b
+#     ---
+#     int64 sum
+#     
+
+$ cd ../..
+$ catkin_make install
+$ cd -
+#
+# In catkin workspace, make the package again.
+#
+# Any .msg file in the msg directory will generate code for use in all supported
+# languages:
+#
+#     C++ message header: ~/catkin_ws/devel/include/beginner_tutorials/ 
+#     Python script:      ~/catkin_ws/devel/lib/python2.7/dist-packages/beginner_tutorials/msg 
+#     Lisp file:          ~/catkin_ws/devel/share/common-lisp/ros/beginner_tutorials/msg/
+#
+# Any .srv files in the srv directory will generate code in supported languages:
+#
+# C++: header files generated in the same directory as the message header files 
+# Python & Lisp: an 'srv' folder will be generated besides the 'msg' folders
+#

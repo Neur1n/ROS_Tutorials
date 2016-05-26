@@ -1,0 +1,221 @@
+#=============================================================================== 1. Publisher Node
+$ roscd beginner_tutorials
+$ mkdir -p src
+$ gvim src/talker.cpp
+#
+# The .../beginner_tutorials/src seems already exists after walking through all
+# previous tutorials.
+#
+# Create the cpp file and paste the content into it. (provided by: https://raw.
+# github.com/ros/ros_tutorials/indigo-devel/roscpp_tutorials/talker/talker.cpp)
+#
+
+#=============================================================================== 2. Code Explanation
+27 #include "ros/ros.h"
+#
+# ros/ros.h is a convenience include that includes all the headers necessary to
+# use the most common public pieces of the ROS system.
+#
+
+32 #include "std_msgs/String.h"
+#
+# This includes the "std_msgs/String" message, which resides in the "std_msgs"
+# package. This is a header generated automatically from the "String.msg" file 
+# in that package. For more information on message definitions, see the msg 
+# page (http://wiki.ros.org/msg).
+#
+
+53 ros::init(argc, argv, "talker");
+#
+# Initialize ROS. This allows ROS to do name remapping through the command line
+# -- not important for now. This is also where we specify the name of our node.
+# Node names must be unique in a running system.
+
+# The name used here must be a base name, ie. it cannot have a / in it.
+# (http://wiki.ros.org/Names#Graph)
+#
+
+62 ros::NodeHandle n;
+#
+# Create a handle to this process' node. The first NodeHandle created will do 
+# the initialization of the node, and the last one destructed will cleanup any 
+# resources the node was using.
+#
+
+83 ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+#
+# The advertise() function is to tell the master that we are going to publish a
+# message of type "std_msgs/String" on the topic chatter. This lets the master 
+# tell any nodes listening on chatter that we are going to publish data on that
+# topic. 
+#
+# The second argument is the size of our publishing queue. In this case if we 
+# are publishing too quickly it will buffer up a maximum of 1000 messages before
+# beginning to throw away old ones.
+#
+# NodeHandle::advertise() returns a ros::Publisher object, which serves two 
+# purposes:
+# 
+#     1) it contains a publish() method that lets you publish messages onto the 
+#        topic it was created with
+#     2) when it goes out of scope, it will automatically unadvertise
+#
+
+87 ros::Rate loop_rate(10);
+#
+# A ros::Rate object allows you to specify a frequency that you would like to 
+# loop at. It will keep track of how long it has been since the last call to 
+# Rate::sleep() (line 127), and sleep for the correct amount of time. In this 
+# case it runs at 10Hz.
+#
+
+95 int count = 0;
+#
+# A count of how many messages we have sent. This is used to create a unique 
+# string for each message.
+#
+
+96 while (ros::ok())
+#
+# By default roscpp will install a SIGINT handler which provides Ctrl-C handling
+# which will cause ros::ok() to return false if that happens.
+#
+# ros::ok() will return false if:
+#
+#     -a SIGINT is received (Ctrl-C)
+#     -we have been kicked off the network by another node with the same name
+#     -ros::shutdown() has been called by another part of the application
+#     -all ros::NodeHandles have been destroyed
+#
+# Once ros::ok() returns false, all ROS calls will fail.
+# 
+
+103 std_msgs::String msg;
+104
+105 std::stringstream ss;
+106 ss << "hello world " << count;
+107 msg.data = ss.str();
+#
+# Broadcasting a message on ROS using a message-adapted class generally 
+# generated from a msg file. More complicated data types are possible, but for 
+# now just use the standard String message, which has one member: "data".
+#
+
+111 ROS_INFO("%s", msg.data.c_str());
+#
+# ROS_INFO and friends are our replacement for printf/cout. See the rosconsole 
+# documentation for more information.
+# (http://wiki.ros.org/rosconsole)
+#
+
+121 chatter_pub.publish(msg);
+#
+# Broadcasting the message to anyone who is connected. The parameter is the 
+# message object (line 93). The type of this object must agree with the type 
+# given as a template parameter to the advertise<>() (line 45) call, as was
+# done in the constructor above.
+#
+
+125 ros::spinOnce();
+#
+# Call this function is not necessary for this simple program, because we are 
+# not receiving any callbacks. However, if you were to add a subscription into 
+# this application, and did not have ros::spinOnce() here, the callbacks would 
+# never get called. So, add it for good measure.
+#
+
+129 loop_rate.sleep();
+#
+# Using the ros::Rate object (line 64) to sleep for the time remaining to let 
+# it hit the 10hz publish rate.
+#
+
+#=============================================================================== 3. Subscriber Node
+$ gvim src/talker.cpp
+#
+# https://raw.github.com/ros/ros_tutorials/indigo-devel/roscpp_tutorials/
+# listener/listener.cpp
+#
+
+#=============================================================================== 4. Code Explanation
+36 void chatterCallback(const std_msgs::String::ConstPtr& msg)
+37 {
+38   ROS_INFO("I heard: [%s]", msg->data.c_str());
+39 }
+#
+# This is the callback function that will get called when a new message has 
+# arrived on the chatter topic. The message is passed in a boost shared_ptr
+# (http://www.boost.org/doc/libs/1_37_0/libs/smart_ptr/shared_ptr.htm), which 
+# means you can store it off if you want, without worrying about it getting 
+# deleted underneath you, and without copying the underlying data.
+#
+
+79 ros::Subscriber sub = n.subscribe("chatter", 1000, chatterCallback);
+#
+# Subscribes to the chatter topic with the master. ROS will call the 
+# chatterCallback() function whenever a new message arrives. 
+# 
+# The 2nd argument is the queue size, in case we are not able to process 
+# messages fast enough. In this case, if the queue reaches 1000 messages, we 
+# will start throwing away old messages as new ones arrive.
+#
+# NodeHandle::subscribe() returns a ros::Subscriber object, that you must hold
+# on to until you want to unsubscribe. When the Subscriber object is destructed,
+# it will automatically unsubscribe from the chatter topic.
+#
+# There are versions of the NodeHandle::subscribe() function which allow you to
+# specify a class member function, or even anything callable by a Boost.Function
+# object. The roscpp overview contains more information.
+# (http://wiki.ros.org/roscpp/Overview)
+#
+
+88 ros::spin();
+#
+# It enters a loop, calling message callbacks as fast as possible. If there's 
+# nothing for it to do it won't use much CPU. It will exit once ros::ok() 
+# returns false, which means ros::shutdown() has been called, either by the 
+# default Ctrl-C handler, the master telling us to shutdown, or it being called
+# manually.
+#
+
+#=============================================================================== 5. Building Nodes
+Append the following to the .../beginner_tutorials/CMakeLists.txt:
+
+    include_directories(include ${catkin_INCLUDE_DIRS})
+
+    add_executable(talker src/talker.cpp)
+    target_link_libraries(talker ${catkin_LIBRARIES})
+    add_dependencies(talker beginner_tutorials_generate_messages_cpp)
+
+    add_executable(listener src/listener.cpp)
+    target_link_libraries(listener ${catkin_LIBRARIES})
+    add_dependencies(listener beginner_tutorials_generate_messages_cpp)
+#
+# line 184: this will create two executables, talker and listener, which by  
+#           default will go into package directory of your devel space, located
+#           by default at: .../learnros_ws/devel/lib/<package name>.
+#
+# line 187(191): this makes sure message headers of this package are generated
+#           before being used. If you use messages from other packages inside 
+#           your catkin workspace, you need to add dependencies to their 
+#           respective generation targets as well, because catkin builds all 
+#           projects in parallel. As of *Groovy* you can use the following 
+#           variable to depend on all necessary targets
+#
+# line 188(192): add dependencies for the executable targets to message 
+#           generation targets
+#
+# You can invoke executables directly or you can use rosrun to invoke them. 
+# They are not placed in '<prefix>/bin' because that would pollute the PATH 
+# when installing your package to the system.
+#
+
+$ catkin_make
+#
+# Build the nodes in .../learnros_ws.
+#
+# * Or if you're adding as new pkg, you may need to tell catkin to force making
+#   by --force-cmake option. 
+#   See catkin/Tutorials/using_a_workspace#With_catkin_make.
+#   (http://wiki.ros.org/catkin/Tutorials/using_a_workspace#With_catkin_make)
+#

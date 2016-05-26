@@ -1,0 +1,24 @@
+#=============================================================================== 1. Run Publisher
+$ roscore
+$ rosrun beginner_tutorials talker
+#
+# This is for C++. For Python, use talker.py.
+#
+# Gives out something like:
+#
+#    [ INFO] [1464038873.610733493]: hello world 50
+#    [ INFO] [1464038873.710747497]: hello world 51
+#    [ INFO] [1464038873.810780103]: hello world 52
+#
+
+#=============================================================================== 2. Run Subscriber
+$ rosrun beginner_tutorials listener
+#
+# Gives out:
+#
+#    [ INFO] [1464038873.611168210]: I heard: [hello world 50]
+#    [ INFO] [1464038873.711193965]: I heard: [hello world 51]
+#    [ INFO] [1464038873.811225472]: I heard: [hello world 52]
+#
+
+* There is time delay.

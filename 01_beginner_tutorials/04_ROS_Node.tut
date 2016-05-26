@@ -1,0 +1,29 @@
+#=============================================================================== 1. Install Simulator
+$ sudo apt-get install ros-indigo-ros-tutorials
+
+#=============================================================================== 2. roscore
+$ roscore
+
+#=============================================================================== 3. rosnode
+$ rosnode list
+$ rosnode info /rosout
+#
+# Run "rosnode" right after "roscore", in a new terminal, and gives out:
+#
+#   /rosout
+#
+$ rosnode cleanup
+#
+# If closing a turtlesim with Ctrl-C instead of clicking on the "close" button
+# of it, there will still be a /turtlesim node in the list. It is more obivous
+# when running another node with another name, for example "my_turtle". Use this
+# this command to clean the node list.
+#
+
+#=============================================================================== 4.  rosrun
+$ rosrun turtlesim turtlesim_node (__name:=my_turtle)
+#
+# Run this in a new terminal. The format of "rosrun" is:
+#
+#   $ rosrun [package_name] [node_name] [__name:=custom_name](optional)
+#

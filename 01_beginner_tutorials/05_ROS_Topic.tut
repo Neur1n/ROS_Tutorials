@@ -1,0 +1,166 @@
+#=============================================================================== 1. Keyboard Teleoperation
+$ roscore
+$ rosrun turtlesim turtlesim_node
+$ rosrun tuetlesim turtle_teleop_key
+#
+# Run these 3 commands in 3 different terminals
+#
+
+#=============================================================================== 2. rqt_graph
+$ sudo apt-get install ros-indigo-rqt 
+$ sudo apt-get install ros-indigo-rqt-common-plugins 
+$ rosrun rqt_graph rqt_graph
+#
+# Install and run "rqt_graph" tool (which is part of the rqt package) in a new
+# terminal. It gives something like this:
+#
+#   ------------------  /turtle1/cmd_vel   ---------------
+#   | /teleop_turtle | ------------------> | /turlte_sim | 
+#   ------------------                     ---------------
+#        [node]             [topic]             [node]
+#
+# For actual output, check the screenshot 5_ROS_Topic_rqt_1.png.
+# For ROS Hydro and later, the topic is shown as above. For ealier versions,
+# could be "/turtle1/command_velocity".
+#
+
+#=============================================================================== 3. rostopic
+$ rostopic -h
+#
+# Help option, which lists the sub-commands for rostopic:
+#
+#   rostopic bw     display bandwidth used by topic
+#   rostopic echo   print messages to screen
+#   rostopic hz     display publishing rate of topic    
+#   rostopic list   print information about active topics
+#   rostopic pub    publish data to topic
+#   rostopic type   print topic type  
+#
+
+$ rostopic echo /turtle1/cmd_vel # line 33
+#
+# The format of this command is:
+#
+#   rostopic echo [topic]
+#
+# Press the refresh button on node graph, now a new node is also subscribed to
+# the "/turtle1/cmd_vel" topic. Check the screenshot 5_ROS_Topic_rqt_2.png.
+#
+
+$ rostopic list -h # line 35
+#
+# Gives out:
+#
+#   Usage: rostopic list [/namespace]
+#
+#   Options:
+#   -h, --help                  show this help message and exit
+#   -b BAGFILE, --bag=BAGFILE   list topics in .bag file
+#   -v, --verbose               list full details about each topic
+#   -p                          list only publishers
+#   -s                          list only subscribers
+#   --host                      group by host name
+#
+
+$ rostopic list -v
+#
+# Gives out:
+#
+#   Published topics:
+#    * /turtle1/color_sensor [turtlesim/Color] 1 publisher
+#    * /turtle1/cmd_vel [geometry_msgs/Twist] 1 publisher
+#    * /rosout [rosgraph_msgs/Log] 4 publishers
+#    * /rosout_agg [rosgraph_msgs/Log] 1 publisher
+#    * /turtle1/pose [turtlesim/Pose] 1 publisher
+#
+#   Subscribed topics:
+#    * /turtle1/cmd_vel [geometry_msgs/Twist] 2 subscribers
+#    * /rosout [rosgraph_msgs/Log] 1 subscriber
+#    * /statistics [rosgraph_msgs/TopicStatistics] 1 subscriber
+#
+   
+$ rostopic type /turtle1/cmd_vel # line 37
+#
+# Usage: 
+#
+#   $ rostopic type [topic]
+#
+# Gives out:
+#
+#   geometry_msgs/Twist
+#
+
+$ rosmsg show geometry_msgs/Twist
+#
+# Gives out:
+#
+#   geometry_msgs/Vector3 linear
+#     float64 x
+#     float64 y
+#     float64 z
+#   geometry_msgs/Vector3 angular
+#     float64 x
+#     float64 y
+#     float64 z
+#   
+
+$ rostopic pub -1 /turtle1/cmd_vel geometry_msgs/Twist -- '[2.0, 0.0, 0.0]' '[0.0, 0.0, 1.8]'
+#
+# Usage:
+#
+#   rostopic pub [topic] [msg_type] [args] (line 36)
+#
+# Important:
+#
+#   (1)-1: this option (dash-one) causes rostopic to only publish 1 message
+#          then exit
+#   (2)--: this option (double-dash) tells the option parser that none of the 
+#          following arguments is an option. This is required in cases where 
+#          your arguments have a leading dash -, like negative numbers.
+#
+# Make a steady stream of commands at 1 Hz to keep the turtle moving:
+#
+#   $ rostopic pub /turtle1/cmd_vel geometry_msgs/Twist -r 1 -- '[2.0, 0.0, 0.0]' '[0.0, 0.0, 1.8]'
+#
+# The node graph is change now. Check screenshot 5_ROS_Topic_rqt_3.png.
+#
+
+$ rostopic hz /turtle1/pose # line 34
+#
+# Gives out (the first 3 outputs):
+#
+#   subscribed to [/turtle1/pose]
+#   average rate: 62.502
+#	    min: 0.016s max: 0.016s std dev: 0.00004s window: 62
+#   average rate: 62.502
+#	    min: 0.016s max: 0.016s std dev: 0.00003s window: 124
+#   average rate: 62.502
+#	    min: 0.016s max: 0.016s std dev: 0.00003s window: 187
+#
+# Now we can tell that the turtlesim is publishing data about our turtle at the
+# rate of 62 Hz.
+#
+
+$ rostopic type /turtle1/cmd_vel | rosmsg show
+#
+# Use rostopic type in conjunction with rosmsg show to get in depth information
+# about a topic. Gives out:
+#
+#   geometry_msgs/Vector3 linear
+#     float64 x
+#     float64 y
+#     float64 z
+#   geometry_msgs/Vector3 angular
+#     float64 x
+#     float64 y
+#     float64 z
+#
+
+$ rosrun rqt_plot rqt_plot
+#
+# In the new window that should pop up, a text box in the upper left corner 
+# gives you the ability to add any topic to the plot. Typing /turtle1/pose/x
+# will highlight the plus button, previously disabled. Press it and repeat the 
+# same procedure with the topic /turtle1/pose/y. You will now see the turtle's 
+# x-y location plotted in the graph.
+#

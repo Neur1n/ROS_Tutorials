@@ -1,0 +1,113 @@
+#=============================================================================== 1. Check Installation
+$ roscd
+$ roswtf
+#
+# Firstly it cd to ~/Documents/learnros_ws/devel, then gives out:
+#
+#     Loaded plugin tf.tfwtf
+#     No package or stack in context
+#     =========================================================================
+#     Static checks summary:
+#     
+#     No errors or warnings
+#     =========================================================================
+#     
+#     ROS Master does not appear to be running.
+#     Online graph checks will not be run.
+#     ROS_MASTER_URI is [http://localhost:11311]
+#
+# Which is the same result when using "roswtf" in the pwd of /home/[user_name].
+#
+# line 7 : the current working directory from which you're calling roswtf is 
+#          neither a ros stack or a ros package
+#
+# line 10: this is a report on any filesystem issues. There were no errors in
+#          this case
+#
+
+$ roscd beginner_tutorials
+$ roswtf
+#
+# Gives out:
+#
+#     Loaded plugin tf.tfwtf
+#     Package: beginner_tutorials
+#     =========================================================================
+#     Static checks summary:
+#     
+#     No errors or warnings
+#     =========================================================================
+#     
+#     ROS Master does not appear to be running.
+#     Online graph checks will not be run.
+#     ROS_MASTER_URI is [http://localhost:11311]
+#
+# line 34: roswtf was started in beginner_tutorials package
+#
+
+#=============================================================================== 2. Try it Online
+$ roscore
+$ roscd
+$ roswtf
+#
+# Gives out:
+#
+#     No package or stack in context
+#     =========================================================================
+#     Static checks summary:
+#     
+#     No errors or warnings
+#     =========================================================================
+#     Beginning tests of your ROS graph. These may take awhile...
+#     analyzing graph...
+#     ... done analyzing graph
+#     running graph rules...
+#     ... done running graph rules
+#     
+#     Online checks summary:
+#     
+#     Found 1 warning(s).
+#     Warnings are things that may be just fine, but are sometimes at fault
+#     
+#     WARNING The following node subscriptions are unconnected:
+#      * /rosout:
+#        * /rosout
+#
+# roswtf did some online examination of your graph now that your roscore is
+# running. Time consumption depends on how many ROS nodes you is running.
+#
+# roswtf is warning that the rosout node is subscribed to a topic that no one 
+# is publishing to. In this case, this is expected because nothing else is 
+# running.
+#
+# If running "$ roscd beginner_tutorials" followed by roswtf, only line 55 is
+# changed to "Package: beginner_tutorials".
+#
+
+#=============================================================================== 3. Errors
+$ ROS_PACKAGE_PATH=bad:$ROS_PACKAGE_PATH roswtf
+#
+# Gives out:
+#
+#     Loaded plugin tf.tfwtf
+#     No package or stack in context
+#     =========================================================================
+#     Static checks summary:
+#     
+#     Found 1 error(s).
+#     
+#     ERROR Not all paths in ROS_PACKAGE_PATH [bad:/home/jihang/Documents/
+#     learnros_ws/src:/opt/ros/indigo/share:/opt/ros/indigo/stacks] point to an
+#     existing directory: 
+#      * bad
+#     
+#     =========================================================================
+#     
+#     ROS Master does not appear to be running.
+#     Online graph checks will not be run.
+#     ROS_MASTER_URI is [http://localhost:11311]
+#
+# (* There are many other types of problems that roswtf can find. If you find
+# yourself stumped by a build or communication issue, try running it and seeing
+# if it can point you in the right direction.)
+#

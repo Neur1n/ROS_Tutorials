@@ -1,0 +1,153 @@
+#=============================================================================== 1. Record
+$ roscore
+$ rosrun turtlesim turtlesim_node
+$ rosrun turtlesim turtle_teleop_key
+
+$ rostopic list -v
+#
+# Gives out:
+#
+#     Published topics:
+#      * /turtle1/color_sensor [turtlesim/Color] 1 publisher
+#      * /turtle1/cmd_vel [geometry_msgs/Twist] 1 publisher
+#      * /rosout [rosgraph_msgs/Log] 2 publishers
+#      * /rosout_agg [rosgraph_msgs/Log] 1 publisher
+#      * /turtle1/pose [turtlesim/Pose] 1 publisher
+#     
+#     Subscribed topics:
+#      * /turtle1/cmd_vel [geometry_msgs/Twist] 1 subscriber
+#      * /rosout [rosgraph_msgs/Log] 1 subscriber
+#
+# The list of published topics are the only message types that could potentially
+# be recorded in the data log file, as only published messages are recorded.
+#
+# The topic /turtle1/cmd_vel is the command message published by teleop_turtle 
+# that is taken as input by the turtlesim process.
+#
+# The messages /turtle1/color_sensor and /turtle1/pose are output messages 
+# published by turtlesim.
+#
+
+$ roscd beginner_tutorials
+$ mkdir bagfiles
+$ cd bagfiles
+$ rosbag record -a
+#
+# Usage:
+#
+#     rosbag <subcommand> [options] [args]
+#
+# Using option "-a" with "record" means it records all messages published by 
+# all nodes.
+#
+# (For additional information, see http://wiki.ros.org/rosbag)
+#
+# Gives out:
+#
+#     [ INFO] [1464060399.722792271]: Recording to 2016-05-23-23-26-39.bag.
+#     [ INFO] [1464060399.723169395]: Subscribing to /turtle1/color_sensor
+#     [ INFO] [1464060399.729119503]: Subscribing to /turtle1/cmd_vel
+#     [ INFO] [1464060399.735898229]: Subscribing to /rosout
+#     [ INFO] [1464060399.743077742]: Subscribing to /rosout_agg
+#     [ INFO] [1464060399.749071868]: Subscribing to /turtle1/pose
+# 
+# A file with a name that begins with the year, data, and time and the suffix
+# ".bag" appears in the .../learnros_ws/bagfiles directory.
+#
+
+#=============================================================================== 2. Examining and Playing the Bag File
+$ rosbag info 2016-05-23-23-26-39.bag
+#
+# Usage:
+#
+#     $ rosbag info [your bagfile]
+#
+# Gives out:
+#
+#     path:        2016-05-23-23-26-39.bag
+#     version:     2.0
+#     duration:    2:23s (143s)
+#     start:       May 23 2016 23:26:39.76 (1464060399.76)
+#     end:         May 23 2016 23:29:03.57 (1464060543.57)
+#     size:        1.2 MB
+#     messages:    17978
+#     compression: none [2/2 chunks]
+#     types:       geometry_msgs/Twist [9f195f881246fdfa2798d1d3eebca84a]
+#                  rosgraph_msgs/Log   [acffd30cd6b6de30f120938c17c593fb]
+#                  turtlesim/Color     [353891e354491c51aabe32df673fb446]
+#                  turtlesim/Pose      [863b248d5016ca62ea2e895ae5265cf9]
+#     topics:      /rosout                    4 msgs    : rosgraph_msgs/Log   (2 connections)
+#                  /turtle1/cmd_vel          21 msgs    : geometry_msgs/Twist
+#                  /turtle1/color_sensor   8977 msgs    : turtlesim/Color    
+#                  /turtle1/pose           8976 msgs    : turtlesim/Pose
+# 
+
+$ rosbag play 2016-05-23-23-26-39.bag
+#
+# Gives out:
+#
+#     [ INFO] [1464061454.543616345]: Opening 2016-05-23-23-26-39.bag
+#     
+#     Waiting 0.2 seconds after advertising topics... done.
+#     
+#     Hit space to toggle paused, or 's' to step.
+#      [RUNNING]  Bag Time: 1464060423.412470   Duration: 23.655254 / 143.815096
+#
+# Eventually the topic /turtle1/cmd_vel will be published and the turtle should
+# start moving in turtlesim in a pattern similar to the one you executed from
+# the teleop program.
+#
+# By using $ rosbag play 2016-05-23-23-26-39.bag, you should see the turtle 
+# execute a slightly different trajectory - this is the trajectory that would
+# have resulted had you issued your keyboard commands twice as fast.
+#
+# Check the screenshot 14_Turtlesim_Playback.png.
+#
+
+#=============================================================================== 3. Recording a Data Subset
+$ rosrun turtlesim turtlesim_node
+$ rosrun turtlesim turtle_teleop_key
+$ rosbag record -O subset /turtle1/cmd_vel /turtle1/pose
+#
+# Gives out:
+#
+#     [ INFO] [1464062493.895060128]: Subscribing to /turtle1/cmd_vel
+#     [ INFO] [1464062493.899873663]: Subscribing to /turtle1/pose
+#     [ INFO] [1464062493.906892216]: Recording to subset.bag.
+#
+# The -O argument tells rosbag record to log to a file named "subset.bag", and
+# the topic arguments cause rosbag record to only subscribe to these two topics.
+# Move the turtle around for several seconds using the keyboard arrow commands,
+# and then Ctrl-C the rosbag record.
+#
+
+$ rosbag info subset.bag
+#
+# Gives out:
+#
+#     path:        subset.bag
+#     version:     2.0
+#     duration:    14.7s
+#     start:       May 24 2016 00:01:34.17 (1464062494.17)
+#     end:         May 24 2016 00:01:48.91 (1464062508.91)
+#     size:        77.3 KB
+#     messages:    928
+#     compression: none [1/1 chunks]
+#     types:       geometry_msgs/Twist [9f195f881246fdfa2798d1d3eebca84a]
+#                  turtlesim/Pose      [863b248d5016ca62ea2e895ae5265cf9]
+#     topics:      /turtle1/cmd_vel     6 msgs    : geometry_msgs/Twist
+#                  /turtle1/pose      922 msgs    : turtlesim/Pose
+#
+
+$ rosbag play subset.bag
+$ rosbag play -r 2 subset.bag
+#
+# Check screenshot 14_Turtlesim_Playback_Subset.png.
+#
+
+#=============================================================================== 4. Limitations of rosbag record/play
+For nodes like turtlesim, where minor timing changes in when command messages
+are processed can subtly alter behavior, the user should not expect perfectly
+mimicked behavior.
+
+(http://wiki.ros.org/ROS/Tutorials/Recording and playing back data)

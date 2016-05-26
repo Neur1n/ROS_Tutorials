@@ -1,0 +1,26 @@
+#=============================================================================== 1. Install "ros-tutorials"
+$ sudo apt-get install ros-indigo-ros-tutorials
+
+#=============================================================================== 2. Find Package
+$ rospack find [package_name]
+#
+# "find" is one of the options of "rospack". Example:
+#
+#   $ rospack find roscpp
+#
+
+#=============================================================================== 3. Directly "cd"
+$ roscd [locationname[/subdir]]
+#
+# Will only find packages that are in ROS_PACKAGE_PATH. Example:
+#
+#   $ roscd roscpp
+#
+#   $ roscd log -> cd to the folder where ROS stores logs
+
+#=============================================================================== 4. Directly "ls"
+$ rosls [locationname[/subdir]]
+
+#=============================================================================== 5. Tab Completion
+You can use TAB completion. For more details, see:
+    http://wiki.ros.org/ROS/Tutorials/NavigatingTheFilesystem#ROS.2BAC8-Tutorials.2BAC8-catkin.2BAC8-NavigatingTheFilesystem.Tab_Completion

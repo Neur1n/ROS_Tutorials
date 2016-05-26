@@ -1,0 +1,83 @@
+http://wiki.ros.org/tf/Tutorials/Introduction%20to%20tf
+
+#=============================================================================== 1. Set Up Demo
+$ sudo apt-get install ros-indigo-ros-tutorials 
+                       ros-indigo-geometry-tutorials 
+                       ros-indigo-rviz 
+                       ros-indigo-rosbash 
+                       ros-indigo-rqt-tf-tree
+
+#=============================================================================== 2. Run Demo
+$ roslaunch turtle_tf turtle_tf_demo.launch
+#
+# After finished the beginner's tutorials, I can simply launch the demo without
+# installing anything. However it gave out the following informations after
+# hitting <C-c> to stop the demo:
+#
+#     INFO: cannot create a symlink to latest log directory: [Errno 2] No such
+#     file or directory: '/home/jihang/.ros/log/latest'
+#
+# Check screenshot 01_tf_demo.png.
+#
+
+#=============================================================================== 3. tf Tools
+$ rosrun tf view_frames
+#
+# Keep the demo running when you want to run this command line. It gives out:
+#
+#     Listening to /tf for 5.000000 seconds
+#     Done Listening
+#     dot - graphviz version 2.36.0 (20140111.2315)
+#     
+#     Detected dot version 2.36
+#     frames.pdf generated
+#
+# This will generate two files named frames.gv and frames.pdf in the pwd.
+#
+
+$ evince frames.pdf
+#
+# Running this brings up the frames.pdf in a PDF viewer.
+#
+
+$ rosrun rqt_tf_tree rqt_tf_tree
+#
+# Check screenshot 01_rqt_tf_tree.png
+#
+
+$ rosrun tf tf_echo turtle1 turtle2
+#
+# Usage:
+#
+#     rosrun tf tf_echo [reference_frame] [target_frame]
+#
+# Gives out something like:
+#
+#     At time 1464234050.588
+#     - Translation: [-1.311, -0.503, 0.000]
+#     - Rotation: in Quaternion [-0.000, -0.000, 0.184, 0.983]
+#                 in RPY (radian) [-0.000, -0.000, 0.371]
+#                 in RPY (degree) [-0.000, -0.000, 21.258]
+#     At time 1464234051.596
+#     - Translation: [-0.782, -0.299, 0.000]
+#     - Rotation: in Quaternion [-0.000, -0.000, 0.182, 0.983]
+#                 in RPY (radian) [-0.000, -0.000, 0.366]
+#                 in RPY (degree) [-0.000, -0.000, 20.954]
+#     At time 1464234052.588
+#     - Translation: [-0.470, -0.180, 0.000]
+#     - Rotation: in Quaternion [-0.000, -0.000, 0.182, 0.983]
+#                 in RPY (radian) [-0.000, -0.000, 0.366]
+#                 in RPY (degree) [-0.000, -0.000, 20.951]
+#     
+# The transform of the turtle2 frame with respect to turtle1 frame which is
+# equivalent to:
+#
+#     turtle2      world    turtle2 
+#            T =        T *        T
+#     turtle1    turtle1      world 
+#
+
+$ rosrun rviz rviz -d `rospack find turtle_tf`/rviz/turtle_rviz.rviz
+#
+# Check screenshots 01_turtle_rviz_1(2).png.
+#

@@ -1,0 +1,78 @@
+#=============================================================================== 1. Workspace Structure
+Test_ws/                       -- WORKSPACE
+|   src/                       -- SOURCE SPACE
+|   |	CMakeLists.txt         -- 'Toplevel' CMake file, provided by catkin
+|   |	package_1/
+|   |	|   CMakeLists.txt     -- CMakeLists.txt file for package_1
+|   |	|   package.xml        -- Package manifest for package_1
+|   |	...
+|   |	package_n/
+|   |	|   CMakeLists.txt     -- CMakeLists.txt file for package_n
+|   |	|   package.xml        -- Package manifest for package_n
+|
+
+#=============================================================================== 2. Create a Package
+$ cd ~/Documents/Test_ws/src
+#
+# Firstly cd to the source folder. There is a quick "cd" method in this IGV
+# machine. Check the "IGV_README.txt" file and starts with line 58.
+#
+
+$ catkin_create_pkg beginner_tutorials std_msgs rospy roscpp
+#
+# Structure of this command:
+#
+#   $ catkin_create_pkg <package_name> [depend1] [depend2] [depend3]
+#
+# More advanced funtionalities:
+#   https://github.com/ros-infrastructure/catkin_pkg
+#
+
+#=============================================================================== 3. Build Workspace
+$ cd ~/Documents/Test_ws
+$ catkin_make
+$ . ~/Documents/Test_ws/devel/setup.bash
+#
+# The "catkin_make" is used again here, the first time is on line 46 in file 
+# "1_Installing_n_Configuring_ROS_Env.txt". Don't know if it is necessary after
+# creating a package, but looks like this time it puts a "beginner_tutorials" 
+# folder into ~/Documents/Test_ws.
+#
+# * Looks like a "catkin_make" is needed everytime the workspace is modified.
+#
+# * Don't know if another setup.bash sourcing (line 34) is necessary, since the 
+#   "source ~/Documents/Test_ws/devel/setup.bash" has been put into .bashrc.
+#
+
+#=============================================================================== 4. Package Dependency
+$ rospack depend1 beginner_tutorials
+#
+# Shows the dependencies of this package, which are also stored in package.xml.
+# Verifying by using:
+#
+#   $ roscd beginner_tutorials
+#   $ grep -n build_depend package.xml
+#
+
+#=============================================================================== 5. Customizing packge.xml
+In ~/Documents/Test_ws/src/beginner_tutorials/package.xml, to do:
+
+    line  4: <version>[...]</version>
+    line  5: <description>[...]</description>
+    line 10: email="..."
+    line 16: <liscense>[...]<liscense>
+
+I have already make a .sh file to customize the package.xml automatically by
+running:
+
+    $ sh ~/Desktop/Cus_pkgxml.sh
+
+However it is not perfect.
+# * Check that file and figure out how it works, dumbass. :P
+#
+
+#=============================================================================== 6. Build Packages
+$ catkin_make
+#
+# Use this command in a workspace to build the packages
+#

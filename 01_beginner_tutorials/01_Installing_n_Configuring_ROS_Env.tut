@@ -1,0 +1,60 @@
+#=============================================================================== 1. Check ROS Environment Variables
+$ printenv | grep ROS
+#
+# Original value:
+#   ROS_ROOT=/opt/ros/indigo/share/ros
+#   ROS_PACKAGE_PATH=/opt/ros/indigo/share:/opt/ros/indigo/stacks
+#   ROS_MASTER_URI=http://localhost:11311
+#   ROSLISP_PACKAGE_DIRECTORIES=
+#   ROS_DISTRO=indigo
+#   ROS_ETC_DIR=/opt/ros/indigo/etc/ros
+#   
+# After making the Test_ws workspace (begins with line 37):
+#   ROS_ROOT=/opt/ros/indigo/share/ros
+#   ROS_PACKAGE_PATH=/home/rassl/Documents/Test_ws/src:/opt/ros/indigo/share:/opt/ros/indigo/stacks
+#   ROS_MASTER_URI=http://localhost:11311
+#   ROSLISP_PACKAGE_DIRECTORIES=/home/rassl/Documents/Test_ws/devel/share/common-lisp
+#   ROS_DISTRO=indigo
+#   ROS_ETC_DIR=/opt/ros/indigo/etc/ros
+#   
+
+#=============================================================================== 2. Source setup.bash
+$ source /opt/ros/indigo/setup.bash
+#
+# Has been done during ROS installation and this entire command line has been 
+# appended to ~/.bashrc by using:
+#
+#   $ echo "source /opt/ros/indigo/setup.bash" >> ~/.bashrc
+#   $ source ~/.bashrc
+#
+# Same method can be used to source your workspace in later work.
+#
+
+*******************************************************************************
+*               The following sections are based on "catkin".                 *
+*******************************************************************************
+
+#=============================================================================== 3. Create a Ros Workspace
+$ mkdir -p ~/Documents/Test_ws/src
+$ cd ~/Documents/Test_ws/src
+$ catkin_init_workspace
+#
+# Create a catkin workspace.
+#
+
+$ cd ~/Documents/Test_ws/
+$ catkin_make
+#
+# Build the workspace. The workspace is empty here, but you can still build it.
+#
+
+$ echo "source ~/Documents/Test_ws/devel/setup.bash" >> ~/.bashrc
+$ source ~/.bashrc
+#
+# Includes the setup.bash of this workspace into ROS_PACKAGE_PATH environment 
+# variable. The xxx/devel folder appears after "catkin_make" and setup.bash 
+# comes with it. Check the ROS_PACKAGE_PATH environment variables by using:
+#
+#   $ echo $ROS_PACKAGE_PATH
+#
+
