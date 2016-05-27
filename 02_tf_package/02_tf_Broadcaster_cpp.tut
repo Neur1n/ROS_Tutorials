@@ -1,0 +1,105 @@
+http://wiki.ros.org/tf/Tutorials/Writing%20a%20tf%20broadcaster%20%28C%2B%2B%29
+
+#=============================================================================== 1. Setting Up
+$ cd ~/Document/learnros_ws/src
+$ catkin_create_pkg tf_tutorials tf roscpp rospy turtlesim
+$ catkin_make --pkg tf_tutorials
+#
+# Using the same workspace as in beginner's tutorials.
+#
+# Using "catkin_make" to only build the tf_tutorials package
+#
+
+#=============================================================================== 2. Broadcaster
+$ roscd tf_tutorials
+$ gvim src/turtle_tf_broadcaster.cpp
+#
+# https://raw.githubusercontent.com/ros/geometry_tutorials/hydro-devel/turtle_tf/src/turtle_tf_broadcaster.cpp
+#
+
+#=============================================================================== 3. Code Explanation
+2 #include <tf/transform_broadcaster.h>
+#
+# The tf package provides an implementation of a TransformBroadcaster to help
+# make the task of publishing transforms easier. Include this header file to 
+# use the TransformBroadcaster.
+#
+
+10 static tf::TransformBroadcaster br;
+#
+# A TransformBroadcaster object used to send the transformations over the wire.
+#
+
+11 tf::Transform transform;
+12 transform.setOrigin( tf::Vector3(msg->x, msg->y, 0.0) );
+13 tf::Quaternion q;
+14 q.setRPY(0, 0, msg->theta);
+#
+# Create a Transform object and copy the information from the 2D turtle pose 
+# into the 3D transform.
+# 
+
+16 br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", turtle_name));
+#
+# This is where the real work is done. 
+#
+# Sending a transform with a TransformBroadcaster requires four arguments:
+#
+#     (1) the transform itself.
+#
+#     (2) timestamp of the transform being published (current time)
+#
+#     (3) the name of the parent frame of the link we're creating ("world")
+#
+#     (4) the name of the child frame of the link we're creating, 
+#         in this case this is the name of the turtle itself.
+#
+
+#=============================================================================== 3. Run Broadcaster
+Append the following to the CMakeLists.txt:
+
+    add_executable(turtle_tf_broadcaster src/turtle_tf_broadcaster.cpp)
+    target_link_libraries(turtle_tf_broadcaster ${catkin_LIBRARIES})
+
+$ cd ../..
+$ catkin_make --pkg tf_tutorials
+
+$ roscd tf_tutorials
+$ mkcd launch
+$ gvim turtle_tf_broadcaster.launch
+#
+#     <launch>
+#         <!-- Turtlesim Node-->
+#         <node pkg="turtlesim" type="turtlesim_node" name="sim"/>
+#     
+#         <node pkg="turtlesim" type="turtle_teleop_key" name="teleop" output="screen"/>
+#         <!-- Axes -->
+#         <param name="scale_linear" value="2" type="double"/>
+#         <param name="scale_angular" value="2" type="double"/>
+#     
+#         <node pkg="tf_tutorials" type="turtle_tf_broadcaster"
+#               args="/turtle1" name="turtle1_tf_broadcaster" />
+#         <node pkg="tf_tutorials" type="turtle_tf_broadcaster"
+#               args="/turtle2" name="turtle2_tf_broadcaster" />
+#     </launch>
+#
+
+$ roslaunch tf_tutorials turtle_tf_broadcaster.launch
+#
+# You should see turtlesim with 1 turtle.
+#
+
+#=============================================================================== 4. Check Results
+$ rosrun tf tf_echo /world /turtle1
+#
+# Usage: 
+#
+#     rosrun tf tf_echo source_frame target_frame [echo_rate]
+# 
+# This should show you the pose of the first turtle. Drive around the turtle
+# using the arrow keys (make sure your terminal window is active, not your
+# simulator window). If you run tf_echo for the transform between the world and
+# turtle 2, you should not see a transform, because the second turtle is not
+# there yet. However, as soon as we add the second turtle in the next tutorial
+# (creating a listener), the pose of turtle 2 will be broadcast to tf.
+#
