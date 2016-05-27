@@ -10,5 +10,5 @@ The current method to create a new file type including two steps:
 (2) add "au BufRead,BufNewFile *.tut setf tut" to /usr/share/vim/vim74/filetype.vim, which is on line 2637 now
 
 ##2. New features
-(1) The .tut file type is configured to disable the spelling checking of Ubuntu terminal command lines. (May 21, 2016)<br\ >
+(1) The .tut file type is configured to disable the spelling checking of Ubuntu terminal command lines. (May 21, 2016)<br/ >
 (2) Highlighting for HTTP links. (May 25, 2016)
