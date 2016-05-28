@@ -1,0 +1,73 @@
+http://wiki.ros.org/tf/Tutorials/Adding%20a%20frame%20%28C%2B%2B%29
+
+#=============================================================================== 1. Where to Add Frames
+tf builds up a tree structure of frames; it does not allow a closed loop in the
+frame structure. This means that a frame only has one single parent, but it can
+have multiple children. 
+
+#=============================================================================== 2. Code
+$ roscd tf_tutorials
+$ gvim src/frame_tf_broadcaster.cpp
+#
+
+#=============================================================================== 3. Code Explanation
+13 transform.setOrigin( tf::Vector3(0.0, 2.0, 0.0) );
+14 transform.setRotation( tf::Quaternion(0, 0, 0, 1) );
+15 br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), 
+                                         "turtle1", "carrot1"));
+#
+# Creating a new transform, from the parent turtle1 to the new child carrot1.
+# The carrot1 frame is 2 meters offset to the left from the turtle1 frame.
+#
+
+#=============================================================================== 4. Run Frame Broadcaster
+Append the following to the CMakeLists.txt:
+
+    add_executable(frame_tf_broadcaster src/frame_tf_broadcaster.cpp)
+    target_link_libraries(frame_tf_broadcaster ${catkin_LIBRARIES})
+
+$ cd ../..
+$ catkin_make --pkg tf_tutorials
+
+$ roscd tf_tutorials
+$ gvim launch/tf_tutorials.launch
+#
+# Append the following to the existed launch file:
+#
+#     <node pkg="tf_tutorials" type="frame_tf_broadcaster"
+#       name="broadcaster_frame" />
+#
+
+$ roslaunch tf_tutorials tf_tutorials.launch
+
+#=============================================================================== 5. Check Results
+$ roscd tf_tutorials
+$ gvim src/turtle_tf_listener.cpp
+#
+# Change "/turtle1" in line 35 and 36 to "/carrot1".
+#
+
+$ cd ../..
+$ catkin_make --pkg tf_tutorials
+$ roslaunch tf_tutorials tf_tutorials.launch
+#
+# NOTE Check screenshots 04_tf_add_frames_1(2).png.
+#
+
+#=============================================================================== 6. Broadcasting a Moving Frame
+$ roscd tf_tutorials
+$ gvim src/frame_tf_broadcaster.cpp
+#
+# Modify the /carrot1 frame to change relative to /turtle1 over time:
+#
+#     transform.setOrigin( tf::Vector3(2.0*sin(ros::Time::now().toSec()), 
+#                                      2.0*cos(ros::Time::now().toSec()), 0.0) );
+#     transform.setRotation( tf::Quaternion(0, 0, 0, 1) );
+#
+
+$ cd ../..
+$ catkin_make --pkg tf_tutorials
+$ roslaunch tf_tutorials tf_tutorials.launch
+#
+# Check screenshots 04_tf_moving_fra me_1(2).png
+#

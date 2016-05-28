@@ -1,0 +1,83 @@
+http://wiki.ros.org/tf/Tutorials/Writing%20a%20tf%20listener%20%28C%2B%2B%29
+
+#=============================================================================== 1. Code
+$ roscd tf_tutorials
+$ gvim src/turtle_tf_listener.cpp
+#
+# https://raw.githubusercontent.com/ros/geometry_tutorials/hydro-devel/turtle_tf/src/turtle_tf_listener.cpp
+#
+# NOTE the alternative code is used to call the listener, since an error
+# occurred.
+#
+
+#=============================================================================== 2. Code Explanation
+2 #include <tf/transform_listener.h>
+#
+# The tf package provides an implementation of a TransformListener to help make
+# the task of receiving transforms easier. Including this header file to use 
+# the TransformListener.
+#
+
+20 tf::TransformListener listener;
+#
+# Creating a TransformListener object. Once the listener is created, it starts
+# receiving tf transformations over the wire, and buffers them for up to 10
+# seconds. The TransformListener object should be scoped to persist otherwise
+# its cache will be unable to fill and almost every query will fail. A common 
+# method is to make the TransformListener object a member variable of a class.
+#
+
+25 try{
+26     listener.lookupTransform("/turtle2", "/turtle1",
+27                              ros::Time(0), transform);
+28 }
+#
+# This is where the real work is done. 
+#
+# Querying the listener for a specific transformation requires 4 arguments:
+#
+#     (1) the wanted transform from this frame...
+#     (2) ...to this frame
+#     (3) the time at which we want to transform. Providing ros::Time(0) will 
+#         just get us the latest available transform
+#     (4) the object in which we store the resulting transform
+#
+# All this is wrapped in a try-catch block to catch possible exceptions.
+#
+
+35 geometry_msgs::Twist vel_msg;
+36 vel_msg.angular.z = 4.0 * atan2(transform.getOrigin().y(),
+37                                 transform.getOrigin().x());
+38 vel_msg.linear.x = 0.5 * sqrt(pow(transform.getOrigin().x(), 2) +
+39                               pow(transform.getOrigin().y(), 2));
+#
+# Calculating new linear and angular velocities for turtle2, based on its
+# distance and angle from turtle1. 
+# 
+# The new velocity is published in the topic "turtle2/cmd_vel" and the sim
+# will use that to update turtle2's movement.
+#
+
+#=============================================================================== 3. Run Listener
+Append the following to the CMakeLists.txt:
+
+    add_executable(turtle_tf_broadcaster src/turtle_tf_broadcaster.cpp)
+    target_link_libraries(turtle_tf_broadcaster ${catkin_LIBRARIES})    
+
+$ cd ../..
+$ catkin_make --pkg tf_tutorials
+
+$ roscd tf_tutorials
+$ gvim launch/tf_tutorials.launch
+#
+# Append the following to the existed launch file:
+#
+#     <node pkg="learning_tf" type="turtle_tf_listener"
+#           name="listener" />
+#
+
+$ roslaunch tf_tutorials tf_tutorials.launch
+#
+# You should see turtlesim with 2 turtle. 
+# Check screenshot 02_tf_listener_1(2).png.
+#
