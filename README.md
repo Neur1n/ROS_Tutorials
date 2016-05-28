@@ -11,4 +11,5 @@ The current method to create a new file type including two steps:
 
 ##2. New features
 (1) The .tut file type is configured to disable the spelling checking of Ubuntu terminal command lines. (May 21, 2016)<br/ >
-(2) Highlighting for HTTP links. (May 25, 2016)
+(2) Highlighting for HTTP links. (May 25, 2016)<br/ >
+(3) Orange background color is set for the keywords "NOTE" and "TODO". (May 27, 2016)<br/ >
