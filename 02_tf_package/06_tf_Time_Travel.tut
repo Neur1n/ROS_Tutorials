@@ -1,0 +1,58 @@
+http://wiki.ros.org/tf/Tutorials/Time%20travel%20with%20tf%20%28C%2B%2B%29
+
+#=============================================================================== 1. Time Travel
+$ roscd tf_tutorials
+$ gvim src/turtle_tf_listener.cpp
+#
+#     ros::Time past = ros::Time::now() - ros::Duration(5.0);
+#     listener.waitForTransform("/turtle2", "/turtle1", past, ros::Duration(1.0) );
+#     listener.lookupTransform("/turtle2", "/turtle1", past, transform)
+#
+
+$ cd ../..
+$ catkin_make --pkg tf_tutorials
+$ roslaunch tf_tutorials tf_tutorials.launch
+#
+# Check screenshots 06_tf_time_travel_1(2).png.
+#
+# NOTE
+# We asked tf, "What was the pose of /turtle1 5 seconds ago, relative to
+# /turtle2 5 seconds ago?". This means we are controlling /turtle2 based 
+# on where it was 5 seconds ago as well as where /turtle was 5 seconds ago.
+# 
+# What we really want to ask is, "What was the pose of /turtle1 5 seconds ago,
+# relative to the current position of the /turtle2?".
+#
+
+#=============================================================================== 2. Advanced API for lookupTransform()
+$ roscd tf_tutorials
+$ gvim src/turtle_tf_listener.cpp
+#
+#     ros::Time now = ros::Time::now();
+#     ros::Time past = now - ros::Duration(5.0);
+#     listener.waitForTransform("/turtle2", now,
+#                               "/turtle1", past,
+#                               "/world", ros::Duration(1.0) );
+#     listener.lookupTransform("/turtle2", now,
+#                              "/turtle1", past,
+#                              "/world", transform)           
+#
+# The advanced API for lookupTransform() takes 6 arguments:
+# 
+#     (1) give the transform from this frame,
+#     (2) at this time ...
+#     (3) ... to this frame,
+#     (4) at this time.
+#     (5) Specify the frame that does not change over time ("/world")
+#     (6) the variable to store the result in.
+#
+# These are also for waitForTransform().
+#
+#
+# NOTE What tf does in the background: in the past it computes the transform
+#      from /turtle1 to /world. In the world frame tf time travels from the 
+#      past to now. And at time now tf computes the transform from /world to 
+#      /turtle2.
+#
+# Check screenshot 06_tf_advanced_api.png.
+#
