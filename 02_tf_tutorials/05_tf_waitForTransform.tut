@@ -1,0 +1,43 @@
+http://wiki.ros.org/tf/Tutorials/tf%20and%20Time%20%28C%2B%2B%29
+
+#=============================================================================== 1. waitForTransform()
+$ roscd tf_tutorials
+$ gvim src/turtle_tf_listener.cpp
+#
+# Change the code to make turtle2 follow turtle1, not carrot1.
+#
+# Change "ros::Time(0)" to "ros::Time::now()".
+#
+# The waitForTransform() takes 4 arguments:
+#
+#     (1) the wanted transform from this frame...
+#     (2) ...to this frame
+#     (3) at this time
+#     (4) timeout: don't wait for longer than this maximum duration
+#
+# NOTE waitForTransform() will actually block until the transform between the
+#      two turtles becomes available (usually a few milliseconds), OR --if the
+#      transform does not become available-- until the timeout has been reached.
+# 
+# NOTE The "waitForTransform" function has been used in 03_tf_Listener_cpp.tut
+#      to avoid getting errors.
+#
+
+$ cd ../..
+$ catkin_make --pkg tf_tutorials
+$ roslaunch tf_tutorials tf_tutorials.launch
+#
+# Always gives out errors like: (and don't know how to fix it)
+#
+#     [ERROR] [1464474550.851876521]: Lookup would require extrapolation into 
+#     the future.  Requested time 1464474550.851579382 but the latest data is
+#     at time 1464474550.845912472, when looking up transform from frame
+#     [turtle1] to frame [turtle2]
+#
+
+#=============================================================================== 2. Results
+NOTE If working properly, there is no noticeable difference in the turtle 
+     behavior. That is because the actual timing difference is only a few
+     milliseconds.
+    
+     For real tf use cases, it is often perfectly fine to use Time(0).
