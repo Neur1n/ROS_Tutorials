@@ -1,4 +1,15 @@
+On ebook page 33.
+
 #=============================================================================== 1. ROS Beginner Tutorials 
 http://wiki.ros.org/ROS/Tutorials
+
 #=============================================================================== 2. tf Package
 http://wiki.ros.org/tf
+
+TODO 3. Debugging tf
+     4. Using sensor messages with tf
+     5. Setting up your robot with tf
+
+#=============================================================================== 3. actionlib Package
+http://wiki.ros.org/actionlib
+
