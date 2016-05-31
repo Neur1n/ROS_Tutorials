@@ -1,0 +1,85 @@
+http://wiki.ros.org/actionlib_tutorials/Tutorials/SimpleActionClient
+
+#=============================================================================== 1. Code
+$ roscd learn_actionlib
+$ gvim src/fibonacci_client.cpp
+
+#=============================================================================== 2. Code Explanation
+3 #include <actionlib/client/terminal_state.h>
+#
+# Defines the possible goal states.
+#
+
+12 actionlib::SimpleActionClient<learn_actionlib::FibonacciAction> ac("fibonacci", true);
+#
+# The action client constructor is similar to the server one, here it takes 2
+# arguments:
+#
+#     (1) const std::string &name,
+#     (2) bool spinthread (=true:  spins up a thread to service this action's 
+#                                  subscriptions; defaults to true
+#
+#                          =false: user has to call ros::spin())
+#
+
+14 ROS_INFO("Waiting for action server to start.");
+15 // wait for the action server to start
+16 ac.waitForServer(); //will wait for infinite time
+#
+# Since the action server may not be up and running, the action client will 
+# wait for the action server to start before continuing.
+#
+
+18 ROS_INFO("Action server started, sending goal.");
+19 // send a goal to the action
+20 learn_actionlib::FibonacciGoal goal;
+21 goal.order = 20;
+22 ac.sendGoal(goal);
+#
+# A goal message is created, the goal value is set and sent to the AS.
+#
+
+25 bool finished_before_timeout = ac.waitForResult(ros::Duration(30.0));
+#
+# The AC now waits for the goal to finish before continuing. The timeout on the
+# wait is set to 30 seconds, this means after 30 seconds the function will
+# return with FALSE if the goal has not finished.
+#
+
+#=============================================================================== 3. Compile and Run
+Append the following to CMakeLists.txt:
+
+    add_executable(fibonacci_client src/fibonacci_client.cpp)
+    target_link_libraries(fibonacci_client ${catkin_LIBRARIES})
+    add_dependencies(fibonacci_client ${learn_actionlib_EXPORTED_TARGETS})
+
+$ roscd learn_actionlib
+$ cd ../..
+$ catkin_make --pkg learn_actionlib
+$ rosrun learn_actionlib fibonacci_client
+#
+# Gives out:
+#
+#     [ INFO] [1464735145.451413162]: Waiting for action server to start.
+# 
+# Since the server is not running.
+#
+
+$ rosrun learn_actionlib fibonacci_server
+#
+# Firstly in client's terminal it gives out: (check the time stamp)
+#
+#     [ INFO] [1464735185.337851925]: Action server started, sending goal.
+#
+# Then in server's terminal:
+#
+#     [ INFO] [1464735185.338641740]: /fibonacci: Executing, creating fibonacci
+#     sequence of order 20 with seeds 0, 1
+#     [ INFO] [1464735205.338695759]: /fibonacci: Succeeded
+# 
+# Finally in client's terminal:
+#
+#     [ INFO] [1464735205.339223781]: Action finished: SUCCEEDED
+#
+# * Check screenshot 03_ac_rqt_graph.png.
+#
