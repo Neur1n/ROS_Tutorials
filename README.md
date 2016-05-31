@@ -1,8 +1,10 @@
 # ROS_Tutorials
 Simplified ROS Indigo (in Ubuntu 14.04 LTS) tutorials based on wiki.ros.org/ROS/Tutorials. 
 Just for personal reference.
+##0. Important Notes
+(1) Since there is a built-in package called actionlib_tutorials in /opt/ros/indigo/share/actionlib_tutorials, the package naming rule is changed in 03_actionlib_tutorials. Not like those "xxx_tutorials" in 01 and 02, it will be "learn_actoinlib" in 03.
 
-##1.New File Format: .tut(orial)
+##1. New File Format: .tut(orial)
 
 The current method to create a new file type including two steps:
 
