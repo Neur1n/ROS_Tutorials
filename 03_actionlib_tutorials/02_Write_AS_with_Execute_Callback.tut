@@ -1,0 +1,133 @@
+http://wiki.ros.org/actionlib_tutorials/Tutorials/SimpleActionServer%28ExecuteCallbackMethod%29
+
+$ cd ~/Documents/learnros_ws/src
+$ catkin_create_pkg learn_actionlib actionlib message_generation roscpp rospy std_msgs actionlib_msgs
+
+#=============================================================================== 1. Action Messages
+$ roscd roscd learn_actionlib
+$ mkdir action
+$ gvim action/Fibonacci.action
+#
+#     #goal definition
+#     int32 order
+#     ---
+#     #result definition
+#     int32[] sequence
+#     ---
+#     #feedback
+#     int32[] sequence
+#
+
+Make sure the followings are in CMakeLists.txt:
+
+(1) find_package(catkin REQUIRED COMPONENTS   # line 7 
+        ...
+        actionlib_msgs
+        ...
+    )
+
+(2) add_action_files(                         # line 64
+        DIRECTORY action                      # used to declare the actions
+        FILES                                 # to be generated
+        Fibonacci.action
+    )
+
+(3) generate_messages(                        # line 70
+        DEPENDENCIES actionlib_msgs std_msgs
+    )
+
+(4) catkin_package(                           # line 103
+        CATKIN_DEPENDS actionlib_msgs
+    )
+
+$ cd ../..
+$ catkin_make --pkg learn_actionlib
+
+$ ls devel/share/learn_actionlib/msg/
+#
+# FibonacciActionFeedback.msg  FibonacciActionResult.msg  FibonacciResult.msg
+# FibonacciActionGoal.msg      FibonacciFeedback.msg
+# FibonacciAction.msg          FibonacciGoal.msg
+#
+
+$ ls devel/include/learn_actionlib
+# 
+# FibonacciActionFeedback.h  FibonacciActionResult.h  FibonacciResult.h
+# FibonacciActionGoal.h      FibonacciFeedback.h
+# FibonacciAction.h          FibonacciGoal.h
+#
+
+#=============================================================================== 2. Write a Server
+#-------------------------------------------------------------------------- 2.1 Code
+$ roscd learn_actionlib
+$ gvim src/fibonacci_server.cpp
+
+#-------------------------------------------------------------------------- 2.2 Code Explanation
+NOTE Do remember to change every "learning_actionlib" to "learn_actionlib"
+
+3 #include <learn_actionlib/FibonacciAction.h>
+#
+# This includes the action message generated from the Fibonacci.action file show
+# above. This is a header generated automatically from the FibonacciAction.msg
+# file. For more information on message definitions, see the msg page
+# (http://wiki.ros.org/msg)
+#
+
+11 actionlib::SimpleActionServer<learn_actionlib::FibonacciAction> as_; 
+
+19 FibonacciAction(std::string name) :
+20   as_(nh_, name, boost::bind(&FibonacciAction::executeCB, this, _1), false),
+21   action_name_(name)
+22 {
+23   as_.start();
+24 }
+#
+# The action server is constructed in the constructor of the action.
+# It takes arguments:
+#
+#     (1) node handle
+#     (2) name of the action
+#     (3) executeCB (optional)
+#     (4) auto_start
+#
+# The auto_start is a boolean value that tells the ActionServer wheteher or not 
+# to start publishing as soon as it comes up.
+# NOTE THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS 
+#      and start() should be called after construction of the server.
+#
+# NOTE This template is an overloaded one, it can take different number of 
+#      input arguments. 
+#      (http://docs.ros.org/api/actionlib/html/classactionlib_1_1SimpleActionServer.html)
+#
+
+30 void executeCB(const learn_actionlib::FibonacciGoalConstPtr &goal)
+#
+# The executeCB function referenced in the constructor (line 79)  is created. 
+# The callback function is passed a pointer to the goal message. Note: This is 
+# a boost shared pointer, given by appending "ConstPtr" to the end of the goal
+# message type.
+#
+
+line 33~42
+#
+# The internals of the action are created. In this example ROS_INFO is being
+# published to let the user know that the action is executing.
+#
+
+TODO Check the website for the rest part of explanation.
+
+#=============================================================================== 3. Compile and Run
+Append the following to CMakeLists.txt:
+
+    add_executable(fibonacci_server src/fibonacci_server.cpp)
+    target_link_libraries(fibonacci_server ${catkin_LIBRARIES})
+    add_dependencies(fibonacci_server ${learn_actionlib_EXPORTED_TARGETS})
+
+$ cd ~/Documents/learnros_ws
+$ catkin_make --pkg learn_actionlib 
+$ roscore
+$ rosrun learn_actionlib fibonacci_server
+#
+# NOTE While running this server it didn't give out the INFO or rqt_graphlike 
+#      those in the website example, for unknown reason. 
+#
