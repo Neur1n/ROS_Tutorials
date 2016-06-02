@@ -1,0 +1,59 @@
+http://wiki.ros.org/actionlib_tutorials/Tutorials/SimpleActionClient%28Threaded%29
+
+#=============================================================================== 1. Code
+$ roscd learn_actionlib
+$ gvim src/averaging_client.cpp
+
+#=============================================================================== 2. Code Explanation
+3 #include <actionlib/client/terminal_state.h>
+#
+# Defines the possible goal states.
+#
+# NOTE Also in "03_Write_AC.tut" line 8.
+#
+
+
+7  void spinThread()
+8  {
+9      ros::spin();
+10 }
+#
+# A simple function for spinning a thread that will be used later in the code. 
+# This thread will spin the ros node in the background.
+#
+
+17 actionlib::SimpleActionClient<learn_actionlib::AveragingAction> ac("averaging", false);
+#
+# NOTE The code on the website may be wrong, since it has only 1 argument, but
+#      the explanation said that it takes 2 and set the auto spin option to
+#      "false".
+#      In this template, the auto spin option is "true" by default, according
+#      to "03_Write_AC.tut" line 19-22.
+#
+
+40 // shutdown the node and join the thread back before exiting
+41 ros::shutdown();
+42 spin_thread.join();
+#
+# NOTE May be important in later application.
+#
+
+#=============================================================================== 3. Compile & Run
+Append the following to CMakeLists.txt:
+
+    add_executable(averaging_client src/averaging_client.cpp)
+    target_link_libraries(averaging_client ${catkin_LIBRARIES})
+
+$ roscd learn_actionlib
+$ cd ../..
+$ catkin_make --pkg learn_actionlib
+
+$ roscore
+$ rosrun learn_actionlib averaging_client
+$ rosrun learn_actionlib averaging_server
+#
+# The result should be similar to what has been done in "03_Write_AC.tut".
+#
+# ERROR The client always show action did not finish before time out, even
+#       changing line 17 back to as the same as that on the website.
+#

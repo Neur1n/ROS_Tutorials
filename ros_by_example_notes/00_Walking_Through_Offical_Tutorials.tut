@@ -12,4 +12,9 @@ TODO 3. Debugging tf
 
 #=============================================================================== 3. actionlib Package
 http://wiki.ros.org/actionlib
+http://wiki.ros.org/actionlib/Tutorials
 
+TODO 1. http://wiki.ros.org/actionlib/DetailedDescription
+     2. learn about: 
+        actionlib::SimpleActionServer<learn_actionlib::AveragingAction> as_;
+        actionlib::SimpleActionClient<learn_actionlib::AveragingAction> ac("string");
