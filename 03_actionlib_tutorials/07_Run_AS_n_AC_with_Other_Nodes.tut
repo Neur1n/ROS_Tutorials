@@ -1,0 +1,45 @@
+http://wiki.ros.org/actionlib_tutorials/Tutorials/RunningServerAndClientWithNodes
+
+#=============================================================================== 1. Write Data Node
+$ roscd learn_actionlib
+$ mkdir scripts
+$ gvim scripts/gen_numbers.py
+#
+# The code generates random numbers with a normal distribution centered around 
+# 5 with a standard deviation of 1 and publishes the numbers on the 
+# /random_number (line 7 in the code) topic.
+#
+# For the usage of "rospy.Publisher()" in the code, go to:
+#
+#     http://wiki.ros.org/rospy/Overview/Publishers%20and%20Subscribers
+#
+# NOTE There may be a warning saying that the publisher should be created with 
+#      an explicit keyword argument 'queue_size'. To avoid this you can change
+#
+#          pub = rospy.Publisher('random_number', Float32)
+#
+#      to
+#
+#          pub = rospy.Publisher('random_number', Float32, queue_size=100)
+#
+#      But without the 'queue_size' it worked as well.
+#
+#      (*  Didn't try other size besides 100)
+#
+
+$ chmod +x script/gen_numbers.py
+#
+# Make it executable.
+#
+
+#=============================================================================== 2. Run Data Node
+$ roscore
+$ rosrun learn_actionlib gen_numbers.py
+$ rosrun learn_actionlib averaging_server
+$ rosrun learn_actionlib averaging_client
+#
+# NOTE By running "gen_numbers.py" the error in the last tutorials doesn't 
+#      exist anymore. You should notice that the code of AS subscribes to a
+#      number generator that didn't exist in last tutorial (line 19 of the 
+#      code) so it couldn't run as expected.
+#
