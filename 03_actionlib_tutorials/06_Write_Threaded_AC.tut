@@ -30,6 +30,10 @@ $ gvim src/averaging_client.cpp
 #      In this template, the auto spin option is "true" by default, according
 #      to "03_Write_AC.tut" line 19-22.
 #
+# NOTE Without setting the 2nd argument to "false", it worked as well.
+#      (* This note is added after following the tutorial 
+#      "07_Run_AS_n_AC_with_Other_Nodes.tut")
+#
 
 40 // shutdown the node and join the thread back before exiting
 41 ros::shutdown();
@@ -56,4 +60,10 @@ $ rosrun learn_actionlib averaging_server
 #
 # ERROR The client always show action did not finish before time out, even
 #       changing line 17 back to as the same as that on the website.
+#
+# NOTE The "error" occurred because the AS is not getting any number input. The
+#      and AS subscribes to a number generator that does not yet exist in this
+#      tutorial (line 19 of the code).
+#      (* This note is added after following the tutorial 
+#      "07_Run_AS_n_AC_with_Other_Nodes.tut")
 #
