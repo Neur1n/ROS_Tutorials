@@ -1,0 +1,5 @@
+#=============================================================================== ros::NodeHandle
+http://docs.ros.org/indigo/api/roscpp/html/classros_1_1NodeHandle.html
+
+#=============================================================================== ros::Rate
+http://docs.ros.org/indigo/api/rostime/html/classros_1_1Rate.html
