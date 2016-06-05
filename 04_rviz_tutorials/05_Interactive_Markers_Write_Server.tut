@@ -1,0 +1,40 @@
+http://wiki.ros.org/rviz/Tutorials/Interactive%20Markers%3A%20Writing%20a%20Simple%20Interactive%20Marker%20Server
+
+#=============================================================================== 1. Code
+$ roscd learn_rivz_markers
+$ gvim src/simple_marker.cpp
+#
+# https://raw.githubusercontent.com/ros-visualization/visualization_tutorials/
+# indigo-devel/interactive_marker_tutorials/src/simple_marker.cpp
+#
+
+#=============================================================================== 2. Compile $ Run
+Change the following function in CMakeLists.txt:
+
+    find_package(catkin REQUIRED COMPONENTS # line 7
+      ...
+      interactive_markers
+    )
+#
+# NOTE Cannot build simple_marker.cpp without this previously. The solution is
+#      from:
+#
+#     http://answers.ros.org/question/107081/how-do-i-solve-undefined-reference-to-interactive_markers/
+#
+
+Append the following to CMakeLists.txt:
+
+    add_executable(simple_marker src/simple_marker.cpp)
+    target_link_libraries(simple_marker ${catkin_LIBRARIES})
+
+$ cd ../..
+$ catkin_make --pkg learn_rviz_markersAdd
+
+$ roscore
+$ rosrun rviz rviz
+$ rosrun learn_rviz_markers simple_marker
+#
+# Then use 'Add' to show the single cube.
+#
+# * Check screenshot 05_rviz_simple_marker.png.
+#
