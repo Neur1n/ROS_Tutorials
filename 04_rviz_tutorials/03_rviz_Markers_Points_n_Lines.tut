@@ -1,0 +1,43 @@
+http://wiki.ros.org/rviz/Tutorials/Markers%3A%20Points%20and%20Lines
+
+#=============================================================================== 1. Code
+$ roscd learn_rviz_markers
+$ gvim src/points_and_lines.cpp
+#
+# https://raw.githubusercontent.com/ros-visualization/visualization_tutorials/
+# indigo-devel/visualization_marker_tutorials/src/points_and_lines.cpp
+#
+
+#=============================================================================== 2. Code Explanation
+57 points.id = 0;
+58 line_strip.id = 1;
+59 line_list.id = 2;
+#
+# Assigning 3 different ids to the three markers. The use of the 
+# points_and_lines namespace ensures they won't collide with other 
+# broadcasters.
+#
+
+104 points.points.push_back(p); 
+105 line_strip.points.push_back(p);
+110 line_list.points.push_back(p);
+#
+# TODO The tutorial doesn't explain the definition of "push_back".
+#
+
+#=============================================================================== 3. Compile & Run
+Append the following to CMakeLists.txt:
+
+    add_executable(points_and_lines src/points_and_lines.cpp)
+    target_link_libraries(points_and_lines ${catkin_LIBRARIES})
+
+$ roscd learn_rviz_markers
+$ cd ../..
+$ catkin_make --pkg learn_rviz_markers
+
+$ roscore
+$ rosrun rviz rviz
+$ rosrun learn_rviz_markers points_and_lines
+#
+# Check screenshot 03_rviz_points_n_lines.png.
+#

@@ -1,0 +1,134 @@
+http://wiki.ros.org/rviz/Tutorials/Markers%3A%20Basic%20Shapes
+#
+# visualization_msgs/Marker messages (partial): 
+#     uint8 ARROW=0
+#     uint8 CUBE=1
+#     uint8 SPHERE=2
+#     uint8 CYLINDER=3
+#     uint8 LINE_STRIP=4
+#     uint8 LINE_LIST=5
+#     uint8 CUBE_LIST=6
+#     uint8 SPHERE_LIST=7
+#     uint8 POINTS=8
+#     uint8 TEXT_VIEW_FACING=9
+#     uint8 MESH_RESOURCE=10
+#     uint8 TRIANGLE_LIST=11
+#
+# For more details go to:
+#
+#     http://docs.ros.org/api/visualization_msgs/html/msg/Marker.html
+#     http://wiki.ros.org/rviz/DisplayTypes/Marker
+#
+
+#=============================================================================== 1. Create Package
+$ cd ~/Documents/learnros_ws/src
+$ catkin_create_pkg learn_rviz_markers roscpp visualization_msgs
+
+#=============================================================================== 2. Code
+$ roscd learn_rviz_markers
+$ gvim src/basic_shapes.cpp
+#
+# https://raw.githubusercontent.com/ros-visualization/visualization_tutorials/
+# indigo-devel/visualization_marker_tutorials/src/basic_shapes.cpp
+#
+
+#=============================================================================== 3. Code Explanation
+42 ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
+#
+# Usage:
+#
+#     ros::Publisher ros::NodeHandle::advertise(const std::string &topic,
+#                                               uint32_t          queue_size
+#                                               bool              latch=false
+#                                               )
+# This one takes 3 arguments:
+#
+# (1) topic:            topic to advertise on
+#
+# (2) queue_size:       maximum number of outgoing messages to be queued for
+#                       delivery to subscribers
+#
+# (3) latch (optional): if true, the last message published on this topic will 
+#                       be saved and sent to new subscribers when they connect.
+#
+#                       (his is useful for slow-changing or static data like a 
+#                        map - from line 106)
+#
+
+55 marker.header.frame_id = "/my_frame";
+56 marker.header.stamp = ros::Time::now();
+#
+# The header here is a roslib/Header.
+#
+# NOTE The link of roslib/Header given by the tutorials is not valid. The 
+#      currently working link may be:
+#
+#          http://docs.ros.org/indigo/api/std_msgs/html/msg/Header.html
+#
+
+62 marker.ns = "basic_shapes";
+63 marker.id = 0;
+#
+# The namespace (ns) and id are used to create a unique name for this marker. 
+# If a marker message is received with the same ns and id, the new marker will 
+# replace the old one.
+#
+# NOTE The "ns" is used in conjunction with "id". 
+#      Go to line 19 for more details.
+#
+
+103 marker.lifetime = ros::Duration();
+#
+# The lifetime field specifies how long this marker should stick around before 
+# being automatically deleted. A value of ros::Duration() means never to 
+# auto-delete.
+#
+
+108 while (marker_pub.getNumSubscribers() < 1)
+109 {
+110   if (!ros::ok())
+111   {
+112     return 0;
+113   }
+114   ROS_WARN_ONCE("Please create a subscriber to the marker");
+115   sleep(1);
+116 }
+117 marker_pub.publish(marker);
+#
+# Wait for the marker to have a subscriber and we then publish the marker. Note
+# that you can also use a latched publisher as an alternative to this code:
+#
+#     http://wiki.ros.org/rospy/Overview/Publishers%20and%20Subscribers#rospy.Publisher_initialization
+#
+
+#=============================================================================== 4. Compile and Run
+Append the following to CMakeLists.txt:
+
+    add_executable(basic_shapes src/basic_shapes.cpp)
+    target_link_libraries(basic_shapes ${catkin_LIBRARIES})
+
+$ cd ~/Documents/learnros_ws/
+$ catkin_make --pkg learn_rviz_markers
+
+$ roscore
+$ rosrun learn_rviz_markers basic_shapes
+#
+# You should see a warning here telling "Please create a subscriber to the 
+#  marker".
+#
+$ rosrun rviz rviz
+#
+# Boots up RViz.
+#
+# The first thing to do, because we don't have any tf transforms setup, is to 
+# set the Fixed Frames to the frame we set the marker to above, /my_frame.
+#
+# NOTE On line 55 of basic_shapes.cpp:
+#
+#          marker.header.frame_id = "/my_frame";
+#
+# Next add a Markers display. Notice that the default topic specified, 
+# visualization_marker, is the same as the one being published.
+#
+# * Check screenshot 02_rviz_basic_shapes.png.
+#

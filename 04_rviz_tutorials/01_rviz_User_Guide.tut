@@ -1,0 +1,183 @@
+http://wiki.ros.org/rviz/UserGuide
+
+#=============================================================================== 1. Install
+$ sudo apt-get install ros-indigo-rviz
+#
+# RViz has already been installed in my case. Maybe since I installed the full
+# version of ROS.
+#
+# NOTE There is another way to get RViz, but the method shown here is the
+#      preferred one. For the other method, go to the website on line 1.
+#
+
+#=============================================================================== 2. Startup
+$ source /opt/ros/indigo/setup.bash
+#
+# Do this if you didn't source it with ~/.bashrc.
+#
+
+$ roscore
+$ rosrun rviz rviz
+
+#=============================================================================== 3. Displays
+Clicking the "Add" button to add a display. In my case, the "Grid" is displayed
+by default.
+
+* For more details, go to the website.
+
+#=============================================================================== 4. Configurations
+Different configurations of displays are often useful for different uses of the
+visualizer. A configuration useful for a full PR2 is not necessarily useful for 
+a test cart, for example. To this end, the visualizer lets you load and save 
+different configurations.
+
+A configuration contains:
+
+    (1) Displays + their properties
+    (2) Tool properties
+    (3) Camera type + settings for the initial viewpoint
+
+#=============================================================================== 5. Views Panel
+#-------------------------------------------------------------------------- 5.1 Orbit (default)
+Controls:
+
+    (1) Left mouse button: Click and drag to rotate around the focal point.
+
+    (2) Middle mouse button: Click and drag to move the focal point in the 
+                             plane formed by the camera's up and right vectors.
+                             The distance moved depends on the focal point -- 
+                             if there is an object on the focal point, and you 
+                             click on top of it, it will stay under your mouse.
+
+    (3) Right mouse button: Click and drag to zoom in/out of the focal point. 
+                            Dragging up zooms in, down zooms out.
+
+    (4) Scroll wheel: Zoom in/out of the focal point
+
+#-------------------------------------------------------------------------- 5.2 FPS
+Controls:
+
+    (1) Left mouse button: Click and drag to rotate. Control-click to pick the 
+                           object under the mouse and look directly at it.
+
+    (2) Middle mouse button: Click and drag to move along the plane formed by 
+                             the camera's up and right vectors
+
+    (3) Right mouse button: Click and drag to move along the camera's forward 
+                            vector. Dragging up moves forward, down moves 
+                            backward.
+
+    (4) Scroll wheel: Move forward/backward
+
+#-------------------------------------------------------------------------- 5.3 Top-down Orthographic
+Controls:
+
+    (1) Left mouse button: Click and drag to rotate around the Z axis
+
+    (2) Middle mouse button: Click and drag to move the camera along the XY 
+                             plane
+
+    (3) Right mouse button: Click and drag to zoom the image
+
+    (4) Scroll wheel: Zoom the image
+
+#-------------------------------------------------------------------------- 5.4 XY Orbit
+Controls: 
+
+    (same as Orbit)
+
+#-------------------------------------------------------------------------- 5.5 Third Person Follower
+Controls: 
+
+    (same as Orbit)
+
+#=============================================================================== 6. Views
+The views panel lets you create different named views, which are saved and can 
+be switched between. A view consists of a camera type, camera pose and target 
+frame.
+
+Or:
+
+    (1) View controller type
+
+    (2) View configuration (position, orientation, etc. Possibly different for 
+        each view controller type.)
+
+    (3) The Target Frame (http://wiki.ros.org/rviz/UserGuide#TargetFrame)
+
+NOTE Views are saved per user, not in the config files
+     (http://wiki.ros.org/rviz/UserGuide#Configs)
+
+#=============================================================================== 7. Coordinate Frames
+#-------------------------------------------------------------------------- 7.1 Fixed Frame
+It is the reference frame used to denote the "world" frame. It can be the "map",
+the "world" or for example the odometry frame.
+
+NOTE The fixed frame should not be moving relative to the world.
+
+NOTE If the  fixed frame is changed, all data currently being shown is cleared 
+     rather than re-transformed.
+
+#-------------------------------------------------------------------------- 7.2 Target Frame
+It is the reference frame for the camera view.
+
+For example, if the target frame is:
+
+    (1) the map: robot drives around the map
+
+    (2) the base of robot: robot stays still until everything else moves 
+                           relative to it
+
+#=============================================================================== 8. Tools
+#-------------------------------------------------------------------------- 8.1 Move Camera
+Shortcut: m
+
+#-------------------------------------------------------------------------- 8.2 Select
+Shortcut: s
+
+The Select tool allows you to select items being displayed in the 3D view. It 
+supports single-point selection as well as click/drag box selection.
+
+You can add to a selection with the Shift key, and remove from the selection 
+with the Ctrl key. If you want to move the camera around while selecting 
+without switching back to the Move Camera tool you can hold down the Alt key.
+
+The f key will focus the camera on the current selection.
+
+#-------------------------------------------------------------------------- 8.3 2D Nav Goal
+Shortcut: g
+
+This tool lets you set a goal sent on the "goal" ROS topic. Click on a location 
+on the ground plane and drag to select the orientation.
+
+This tool works with the navigation stack.
+(TODO http://wiki.ros.org/navigation)
+
+#-------------------------------------------------------------------------- 8.4 2D Pose Estimate
+Shortcut: p
+
+This tool works with the navigation stack.
+
+#=============================================================================== 9. Time
+The Time panel is mostly useful when running in a simulator: it allows you to 
+see how much ROS Time time has passed, vs. how much "Wall Clock" (aka real)
+time has passed.
+#
+# TODO ROS Time: http://wiki.ros.org/Clock
+#
+
+The time panel also lets you reset the visualizer's internal time state -- this
+causes a reset of all the displays, as well as a reset of tf's internal cache
+of data.
+
+#=============================================================================== 10. Stereo
+Rviz can render in 3D stereo if you have a graphics card, monitor, and glasses
+that support that. You can read how to set this up:
+
+    http://wiki.ros.org/rviz/Tutorials/Rviz%20in%20Stereo
+#
+# In my case, when RViz is booted up it shows "Stereo is NOT SUPPORT".
+#
+
+#=============================================================================== 11. Plugins
+TODO Go to the website for details.
