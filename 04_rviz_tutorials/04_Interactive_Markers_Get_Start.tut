@@ -1,0 +1,38 @@
+http://wiki.ros.org/rviz/Tutorials/Interactive%20Markers%3A%20Getting%20Started
+#
+# For more details, go to:
+#
+#     http://docs.ros.org/api/visualization_msgs/html/msg/InteractiveMarker.html
+#     http://docs.ros.org/api/visualization_msgs/html/msg/InteractiveMarkerControl.html
+#
+
+#=============================================================================== 1. Introduction
+* Go to the website on line 1.
+
+#=============================================================================== 2. Further Documentation
+* Go to the website on line 1.
+
+#=============================================================================== 3. Built-in Package
+$ roscore
+$ rosrun rviz rviz
+$ rosrun interactive_marker_tutorials basic_controls
+
+In RViz, do the following: (NOTE The following is based on my version of RViz)
+
+    (1) Set the fixed frame to '/base_link'
+
+    (2) Add an 'Interactive Markers' display by clicking on 'Add-By topic' in 
+        the 'Displays' panel, and select 'InteractiveMarkers' under 
+        '/basic_control/update'. This should immediately bring up several grey 
+        cubes in rviz.
+
+    (4) Select 'Interact' in the tool panel. This will enable all interactive 
+        elements in the main view, which will bring up additional arrows and 
+        rings around the boxes. You can left-click on these controls and in 
+        some case on the box itself to change the pose of each interactive 
+        marker. 
+        Some markers have a context menu which you can access by right-clicking
+        on them.
+
+TODO Some of the rest part will be included in the next 2 tutorials. For the
+     others, go to the website on line 1.
