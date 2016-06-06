@@ -1,0 +1,19 @@
+On ebook page 44.
+
+$ cd ~ /[your_workspace]/src
+$ \rm -rf [your_catkin_package]
+#
+# Move the package out of ROS_PACKAGE_PATH
+#
+
+$ cd ~ /[your_workspace]
+$ \rm -rf devel build install
+$ catkin_make
+$ source devel/setup.bash
+#
+# Remove all build objects for all packages then re-catkin_make. Since there is
+# no easy way to just remove the build objects for the removed package.
+#
+
+
+TODO Install packages with 3 different tools. (On ebook page 43)
