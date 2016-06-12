@@ -1,8 +1,18 @@
 #=============================================================================== roslaunch
-http://wiki.ros.org/roslaunch
+http://wiki.ros.org/roslaunch?distro=indigo
 
 #=============================================================================== rosmsg
-http://wiki.ros.org/rosmsg
+http://wiki.ros.org/rosmsg?distro=indigo
+
+#=============================================================================== std_msgs
+http://wiki.ros.org/std_msgs?distro=indigo
+
+#=============================================================================== sensor_msgs
+http://wiki.ros.org/sensor_msgs?distro=indigo
+
+#=============================================================================== rosdep
+http://wiki.ros.org/rosdep
 
 #=============================================================================== serial
-http://wiki.ros.org/serial
+http://wiki.ros.org/serial?distro=indigo
+http://docs.ros.org/indigo/api/serial/html/index.html
