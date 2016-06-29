@@ -1,0 +1,77 @@
+http://wiki.ros.org/dynamic_reconfigure/Tutorials/HowToWriteYourFirstCfgFile
+
+#=============================================================================== 1. Basic Setup
+$ cd ~/Documents/learnros_ws/src
+$ catkin_create_pkg --rosdistro indigo learn_dynamic_reconfigure rospy roscpp dynamic_reconfigure
+$ mkdir cfg
+#
+# Create a file named "Tutorials.cfg" and put the code provided by the webite
+# into the file.
+#
+
+#=============================================================================== 2. Code Explanation
+1 #!/usr/bin/env python
+2 PACKAGE = "learn_dynamic_reconfigure"
+3
+4 from dynamic_reconfigure.parameter_generator_catkin import *
+#
+# Initializing ros and importing the parameter generator.
+#
+
+6 gen = ParameterGenerator()
+#
+# Create a generator.
+#
+
+8 gen.add(...)
+#
+# The add function adds a parameter to the list of parameters. It takes the 
+# following arguments:
+#
+#	  (1) name: A string which specifies the name under which this parameter 
+# 				should be stored
+#
+#	  (2) type: Defines the type of value stored, and can be any of int_t, 
+#				double_t, str_t, or bool_t
+#
+#	  (3) level: A bitmask which will be passed to the dynamic reconfigure 
+#				 callback. When the callback is called all of the level values 
+#				 for parameters that have been changed are ORed together and 
+#				 the resulting value is passed to the callback
+#
+#	  (4) description: string which describes the parameter
+#
+#	  (5) default: specifies the default value
+#
+#	  (6) min: specifies the min value (optional and does not apply to strings 
+#			   and bools)
+#
+#	  (7) max: specifies the max value (optional and does not apply to strings 
+#			   and bools)
+#
+
+13 size_enum = gen.enum(...)
+#
+# Define an integer whose value is set by an enum. To do this we call gen.enum 
+# and pass it a list of constants followed by a description of the enum. Now 
+# that we have created an enum we can now pass it to the generator. Now the 
+# param can be set with "Small" or "Medium" rather than 0 or 1.
+#
+
+21 exit(gen.generate(PACKAGE, "learn_dynamic_reconfigure", "Tutorials"))
+#
+# Tells the generator to generate the necessary files and exit the program. The
+# 2nd parameter is the name of a node this could run in (used to generate 
+# documentation only), the 3rd parameter is a name prefix the generated files a
+# will get (e.g. "<name>Config.h" for c++, or "<name>Config.py" for python.
+#
+
+#=============================================================================== 3. Use .cfg
+$ sudo chmod a+x cfg/Tutorials.cfg 
+#
+# Make it executable.
+#
+
+Configure CMakeLists.txt according to:
+
+	http://wiki.ros.org/dynamic_reconfigure/Tutorials/SettingUpDynamicReconfigureForANode
