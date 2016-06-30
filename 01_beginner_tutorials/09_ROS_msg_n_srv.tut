@@ -17,7 +17,7 @@ msg:
 
 (4)Header: a special type in ROS that contains a timestamp and coordinate frame 
            information that are commonly used in ROS, frequently seen in a msg
-	   file as the 1st line: Header header.
+		   file as the 1st line: Header header.
 
 	   Example:
 
